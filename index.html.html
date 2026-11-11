@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Minhas Finanças</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style type="text/tailwindcss">
+  @theme {
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --font-display: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  }
+</style>
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  input, select, button, textarea { font: inherit; }
+  select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%2394a3b8'%3E%3Cpath d='M4.2 6.2 8 10l3.8-3.8z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.55rem center;
+    background-size: 16px;
+    padding-right: 1.9rem;
+  }
+  select:disabled { opacity: .72; background-image: none; cursor: not-allowed; }
+  .v-pos { color: #047857; }
+  .v-neg { color: #be123c; }
+  .v-inv { color: #6d28d9; }
+  .v-fg  { color: #0f172a; }
+  .v-dim { color: #94a3b8; }
+  @media (prefers-color-scheme: dark) {
+    .v-pos { color: #34d399; }
+    .v-neg { color: #fb7185; }
+    .v-inv { color: #a78bfa; }
+    .v-fg  { color: #e2e8f0; }
+  }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { scrollbar-width: none; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+
+<body class="font-sans bg-slate-100 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100">
+
+<!-- classes usadas pelas linhas montadas em JS (garante a compilação do Tailwind) -->
+<div id="tw-safelist" hidden aria-hidden="true" class="flex flex-col items-center items-baseline gap-1 gap-1.5 gap-2 gap-3 py-10 py-8 py-3 py-2.5 py-1 px-2 px-2.5 px-3 text-center font-display text-[15px] text-[14px] text-[13px] text-[12.5px] text-[12px] text-[11.5px] text-[11px] text-[10.5px] font-bold font-semibold font-medium text-slate-400 text-slate-500 text-slate-600 max-w-[260px] border-b border-t border-slate-100 last:border-0 dark:border-slate-800 sticky top-0 z-10 -mx-5 -mx-3 mt-2 mt-3 mt-0.5 mt-1.5 justify-between bg-white/90 px-5 py-1.5 backdrop-blur-sm first:mt-0 dark:bg-slate-900/90 uppercase tracking-wider tabular-nums rounded-xl rounded-full rounded-lg rounded-sm bg-slate-100 bg-slate-50 bg-slate-200 dark:bg-slate-800 dark:bg-slate-800/60 dark:text-slate-300 dark:text-slate-400 grid h-9 w-9 h-8 w-8 h-7 h-3.5 h-2.5 w-2.5 h-1.5 w-1.5 h-1 shrink-0 place-items-center min-w-0 flex-1 truncate text-right whitespace-nowrap overflow-hidden w-11 w-14 transition hover:bg-slate-100 hover:bg-slate-200 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-white hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/40 dark:hover:text-rose-400 bg-rose-600 text-white line-through opacity-60 border border-dashed border-slate-300 dark:border-slate-700 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300 bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 text-rose-600 dark:text-rose-400 text-emerald-600 dark:text-emerald-400 leading-tight leading-relaxed underline underline-offset-2"></div>
+
+<div class="mx-auto flex max-w-2xl flex-col gap-4 px-4 pt-6 pb-16">
+
+  <!-- ============ CABEÇALHO + MÊS ============ -->
+  <header class="flex items-end justify-between gap-3">
+    <div>
+      <p class="font-display text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">Controle pessoal</p>
+      <h1 class="font-display text-2xl font-extrabold tracking-tight">Minhas Finanças</h1>
+    </div>
+    <div class="flex items-center gap-1 rounded-xl border border-slate-200 bg-white p-1 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+      <button id="mesAnt" aria-label="Mês anterior"
+        class="grid h-8 w-8 place-items-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-white">&#8592;</button>
+      <span id="mesLabel" class="min-w-[92px] text-center font-display text-sm font-bold tabular-nums">—</span>
+      <button id="mesProx" aria-label="Próximo mês"
+        class="grid h-8 w-8 place-items-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-white">&#8594;</button>
+    </div>
+  </header>
+
+  <!-- ============ CARD DE RESUMO ============ -->
+  <section class="overflow-hidden rounded-2xl bg-slate-900 text-white shadow-lg shadow-slate-900/10 dark:ring-1 dark:ring-slate-800">
+    <div class="px-5 pt-5 pb-4">
+      <div class="flex items-start justify-between gap-3">
+        <p class="font-display text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">Saldo atual</p>
+        <span id="saldoTag" class="rounded-full px-2.5 py-1 text-[11px] font-semibold">—</span>
+      </div>
+      <p id="saldo" class="mt-1 font-display text-4xl font-extrabold tabular-nums tracking-tight">R$ 0,00</p>
+      <p id="saldoSub" class="mt-1.5 text-[13px] text-slate-400">Nenhum lançamento neste mês.</p>
+    </div>
+    <div class="grid grid-cols-3 gap-px bg-slate-800">
+      <div class="bg-slate-900 px-3 py-4 sm:px-5">
+        <div class="flex items-center gap-1.5">
+          <i class="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400"></i>
+          <span class="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Receitas</span>
+        </div>
+        <p id="receitas" class="mt-1 font-display text-[16px] font-bold tabular-nums text-emerald-400">R$ 0,00</p>
+        <p id="receitasSub" class="text-[10.5px] leading-tight text-slate-500">—</p>
+      </div>
+      <div class="bg-slate-900 px-3 py-4 sm:px-5">
+        <div class="flex items-center gap-1.5">
+          <i class="h-1.5 w-1.5 shrink-0 rounded-full bg-rose-400"></i>
+          <span class="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Despesas</span>
+        </div>
+        <p id="despesas" class="mt-1 font-display text-[16px] font-bold tabular-nums text-rose-400">R$ 0,00</p>
+        <p id="despesasSub" class="text-[10.5px] leading-tight text-slate-500">—</p>
+      </div>
+      <div class="bg-slate-900 px-3 py-4 sm:px-5">
+        <div class="flex items-center gap-1.5">
+          <i class="h-1.5 w-1.5 shrink-0 rounded-full bg-violet-400"></i>
+          <span class="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Investim.</span>
+        </div>
+        <p id="investimentos" class="mt-1 font-display text-[16px] font-bold tabular-nums text-violet-400">R$ 0,00</p>
+        <p id="investimentosSub" class="text-[10.5px] leading-tight text-slate-500">—</p>
+      </div>
+    </div>
+    <div class="h-1.5 w-full bg-slate-800">
+      <div id="barraGasto" class="h-full w-0 bg-emerald-400 transition-all duration-500"></div>
+    </div>
+  </section>
+
+  <!-- ============ ENTRADAS DO MÊS ============ -->
+  <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+    <div class="mb-4 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+      <h2 class="font-display text-base font-bold">Entradas do mês</h2>
+      <span id="entTotal" class="text-[12.5px] text-slate-400">—</span>
+    </div>
+
+    <div class="flex flex-col gap-3">
+      <div class="flex flex-col gap-1.5">
+        <label for="eSaldoInicial" class="font-display text-[11px] font-bold uppercase tracking-wider text-slate-500">Saldo na conta antes do pagamento</label>
+        <div class="relative">
+          <span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[15px] text-slate-400">R$</span>
+          <input id="eSaldoInicial" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off"
+            class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-3 text-[15px] font-semibold tabular-nums outline-none placeholder:font-normal placeholder:text-slate-400 focus:border-slate-900 focus:bg-white focus:ring-4 focus:ring-slate-900/10 dark:border-slate-700 dark:bg-slate-950 dark:focus:border-slate-400 dark:focus:ring-slate-400/15">
+        </div>
+        <p class="text-[11.5px] text-slate-400">O que você já tinha guardado na conta — entra no saldo, mas não conta como receita do mês.</p>
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label for="eVale" class="font-display text-[11px] font-bold uppercase tracking-wider text-slate-500">Vale (dia 15)</label>
+        <div class="relative">
+          <span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[15px] text-slate-400">R$</span>
+          <input id="eVale" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off"
+            class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-3 text-[15px] font-semibold tabular-nums outline-none placeholder:font-normal placeholder:text-slate-400 focus:border-slate-900 focus:bg-white focus:ring-4 focus:ring-slate-900/10 dark:border-slate-700 dark:bg-slate-950 dark:focus:border-slate-400 dark:focus:ring-slate-400/15">
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label for="ePagamento" id="labPagamento" class="font-display text-[11px] font-bold uppercase tracking-wider text-slate-500">Pagamento</label>
+        <div class="relative">
+          <span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[15px] text-slate-400">R$</span>
+          <input id="ePagamento" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off"
+            class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-3 text-[15px] font-semibold tabular-nums outline-none placeholder:font-normal placeholder:text-slate-400 focus:border-slate-900 focus:bg-white focus:ring-4 focus:ring-slate-900/10 dark:border-slate-700 dark:bg-slate-950 dark:focus:border-slate-400 dark:focus:ring-slate-400/15">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div class="flex flex-col gap-1.5">
+          <label for="eFerias" class="font-display text-[11px] font-bold uppercase tracking-wider text-slate-500">Férias</label>
+          <div class="relative">
+            <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[13px] text-slate-400">R$</span>
+            <input id="eFerias" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off"
+              class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-9 pr-2.5 text-[14px] font-semibold tabular-nums outline-none placeholder:font-normal placeholder:text-slate-400 focus:border-slate-900 focus:bg-white focus:ring-4 focus:ring-slate-900/10 dark:border-slate-700 dark:bg-slate-950 dark:focus:border-slate-400 dark:focus:ring-slate-400/15">
+          </div>
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label for="ePlr" class="font-display text-[11px] font-bold uppercase tracking-wider text-slate-500">PLR</label>
+          <div class="relative">
+            <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[13px] text-slate-400">R$</span>
+            <input id="ePlr" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off"
+              class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-9 pr-2.5 text-[14px] font-semibold tabular-nums outline-none placeholder:font-normal placeholder:text-slate-400 focus:border-slate-900 focus:bg-white focus:ring-4 focus:ring-slate-900/10 dark:border-slate-700 dark:bg-slate-950 dark:focus:border-slate-400 dark:focus:ring-slate-400/15">
+          </div>
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label for="eAbono" class="font-display text-[11px] font-bold uppercase tracking-wider text-slate-500">Abono</label>
+          <div class="relative">
+            <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[13px] text-slate-400">R$</span>
+            <input id="eAbono" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off"
+              class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-9 pr-2.5 text-[14px] font-semibold tabular-nums outline-none placeholder:font-normal placeholder:text-slate-400 focus:border-slate-900 focus:bg-white focus:ring-4 focus:ring-slate-900/10 dark:border-slate-700 dark:bg-slate-950 dark:focus:border-slate-400 dark:focus:ring-slate-400/15">
+          </div>
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label for="eDecimo" class="font-display text-[11px] font-bold uppercase tracking-wider text-slate-500">13º</label>
+          <div class="relative">
+            <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[13px] text-slate-400">R$</span>
+            <input id="eDecimo" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off"
+              class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-9 pr-2.5 text-[14px] font-semibold tabular-nums outline-none placeholder:font-normal placeholder:text-slate-400 focus:border-slate-900 focus:bg-white focus:ring-4 focus:ring-slate-900/10 dark:border-slate-700 dark:bg-slate-950 dark:focus:border-slate-400 dark:focus:ring-slate-400/15">
+          </div>
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label for="eDecimo14" class="font-display text-[11px] font-bold uppercase tracking-wider text-slate-500">14º</label>
+          <div class="relative">
+            <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[13px] text-slate-400">R$</span>
+            <input id="eDecimo14" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off"
+              class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-9 pr-2.5 text-[14px] font-semibold tabular-nums outline-none placeholder:font-normal placeholder:text-slate-400 focus:border-slate-900 focus:bg-white focus:ring-4 focus:ring-slate-900/10 dark:border-slate-700 dark:bg-slate-950 dark:focus:border-slate-400 dark:focus:ring-slate-400/15">
+          </div>
+        </div>
+      </div>
+      <p class="text-[11.5px] text-slate-400">Os valores são por mês e salvam sozinhos. Receitas avulsas (freelance, venda, reembolso) entram como lançamento abaixo.</p>
+    </div>
+  </section>
+
+  <!-- ============ FORMULÁRIO: LANÇAMENTOS / CONTAS FIXAS ============ -->
+  <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+    <div class="mb-4 flex rounded-xl border border-slate-200 p-0.5 dark:border-slate-700" role="tablist">
+      <button id="abaLanc" role="tab" aria-selected="true"
+        class="aba flex-1 rounded-[9px] px-3 py-2 font-display text-[13px] font-bold">Lançamentos</button>
+      <button id="abaFix" role="tab" aria-selected="false"
+        class="aba flex-1 rounded-[9px] px-3 py-2 font-display text-[13px] font-bold">Contas fixas</button>
+    </div>
+
+    <!-- ---- aba lançamentos ---- -->
+    <div id="paneLanc">
+      <div class="mb-4 flex items-baseline justify-between gap-3">
+        <h2 id="formTitulo" class="font-display text-base font-bold">Novo lançamento</h2>
+        <span id="formHint" class="text-[12px] text-slate-400">preencha e toque em Adicionar</span>
+      </div>
+
+      <div class="flex flex-col gap-3">
+        <div class="flex flex-col gap-1.5">
+          <label for="fDesc" class="font-display text-[11px] font-bold uppercase tracking-wider text-slate-500">Descrição</label>
+          <input id="fDesc" type="text" placeholder="mercado, uber, aporte CDB…" autocomplete="off"
+            class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-[15px] outline-none placeholder:text-slate-400 focus:border-slate-900 focus:bg-white focus:ring-4 focus:ring-slate-900/10 dark:border-slate-700 dark:bg-slate-950 dark:focus:border-slate-400 dark:focus:ring-slate-400/15">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="flex flex-col gap-1.5">
+            <label for="fVal" class="font-display text-[11px] font-bold uppercase tracking-wider text-slate-500">Valor</label>
+            <div class="relative">
+              <span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[15px] text-slate-400">R$</span>
+              <input id="fVal" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off"
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-3 text-[15px] font-semibold tabular-nums outline-none placeholder:font-normal placeholder:text-slate-400 focus:border-slate-900 focus:bg-white focus:ring-4 focus:ring-slate-900/10 dark:border-slate-700 dark:bg-slate-950 dark:focus:border-slate-400 dark:focus:ring-slate-400/15">
+            </div>
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="fData" class="font-display text-[11px] font-bold uppercase tracking-wider text-slate-500">Data</label>
+            <input id="fData" type="date"
+              class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-[15px] tabular-nums outline-none focus:border-slate-900 focus:bg-white focus:ring-4 focus:ring-slate-900/10 dark:border-slate-700 dark:bg-slate-950 dark:focus:border-slate-400 dark:focus:ring-slate-400/15">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div id="boxTipo" class="flex flex-col gap-1.5">
+            <label for="fTipo" class="font-display text-[11px] font-bold uppercase tracking-wider text-slate-500">Tipo</label>
+            <select id="fTipo"
+              class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-[15px] outline-none focus:border-slate-900 focus:bg-white focus:ring-4 focus:ring-slate-900/10 dark:border-slate-700 dark:bg-slate-950 dark:focus:border-slate-400 dark:focus:ring-slate-400/15">
+              <option value="despesa">Despesa</option>
+              <option value="receita">Receita</option>
+              <option value="investimento">Investimento</option>
+            </select>
+          </div>
+          <div id="boxCat" class="flex flex-col gap-1.5">
+            <label for="fCat" class="font-display text-[11px] font-bold uppercase tracking-wider text-slate-500">Categoria</label>
+            <select id="fCat"
+              class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-[15px] outline-none focus:border-slate-900 focus:bg-white focus:ring-4 focus:ring-slate-900/10 dark:border-slate-700 dark:bg-slate-950 dark:focus:border-slate-400 dark:focus:ring-slate-400/15"></select>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label for="fSub" class="font-display text-[11px] font-bold uppercase tracking-wider text-slate-500">Subcategoria</label>
+          <select id="fSub"
+            class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-[15px] outline-none focus:border-slate-900 focus:bg-white focus:ring-4 focus:ring-slate-900/10 dark:border-slate-700 dark:bg-slate-950 dark:focus:border-slate-400 dark:focus:ring-slate-400/15"></select>
+        </div>
+
+        <p id="formErro" class="text-[13px] font-medium text-rose-600 dark:text-rose-400" hidden></p>
+
+        <div class="mt-1 flex gap-2">
+          <button id="btnSalvar"
+            class="flex-1 rounded-xl bg-slate-900 px-4 py-3 font-display text-[15px] font-bold text-white transition hover:bg-slate-800 active:scale-[0.99] dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200">Adicionar</button>
+          <button id="btnCancelar" hidden
+            class="rounded-xl border border-slate-200 px-4 py-3 font-display text-[15px] font-bold text-slate-500 transition hover:border-slate-400 hover:text-slate-900 dark:border-slate-700 dark:hover:border-slate-500 dark:hover:text-white">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---- aba contas fixas ---- -->
+    <div id="paneFix" hidden>
+      <div class="mb-4 flex items-baseline justify-between gap-3">
+        <h2 id="fixTitulo" class="font-display text-base font-bold">Nova conta fixa</h2>
+        <span id="fixHint" class="text-[12px] text-slate-400">—</span>
+      </div>
+
+      <div class="flex flex-col gap-3">
+        <div class="flex flex-col gap-1.5">
+          <label for="xNome" class="font-display text-[11px] font-bold uppercase tracking-wider text-slate-500">Conta</label>
+          <input id="xNome" type="text" placeholder="aluguel, luz, cartão, aporte…" autocomplete="off"
+            class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-[15px] outline-none placeholder:text-slate-400 focus:border-slate-900 focus:bg-white focus:ring-4 focus:ring-slate-900/10 dark:border-slate-700 dark:bg-slate-950 dark:focus:border-slate-400 dark:focus:ring-slate-400/15">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="flex flex-col gap-1.5">
+            <label for="xVal" class="font-display text-[11px] font-bold uppercase tracking-wider text-slate-500">Valor</label>
+            <div class="relative">
+              <span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[15px] text-slate-400">R$</span>
+              <input id="xVal" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off"
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-3 text-[15px] font-semibold tabular-nums outline-none placeholder:font-normal placeholder:text-slate-400 focus:border-slate-900 focus:bg-white focus:ring-4 focus:ring-slate-900/10 dark:border-slate-700 dark:bg-slate-950 dark:focus:border-slate-400 dark:focus:ring-slate-400/15">
+            </div>
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="xDia" class="font-display text-[11px] font-bold uppercase tracking-wider text-slate-500">Vence dia</label>
+            <input id="xDia" type="text" inputmode="numeric" placeholder="10" autocomplete="off"
+              class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-[15px] tabular-nums outline-none placeholder:text-slate-400 focus:border-slate-900 focus:bg-white focus:ring-4 focus:ring-slate-900/10 dark:border-slate-700 dark:bg-slate-950 dark:focus:border-slate-400 dark:focus:ring-slate-400/15">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="flex flex-col gap-1.5">
+            <label for="xCat" class="font-display text-[11px] font-bold uppercase tracking-wider text-slate-500">Categoria</label>
+            <select id="xCat"
+              class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-[15px] outline-none focus:border-slate-900 focus:bg-white focus:ring-4 focus:ring-slate-900/10 dark:border-slate-700 dark:bg-slate-950 dark:focus:border-slate-400 dark:focus:ring-slate-400/15"></select>
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="xSub" class="font-display text-[11px] font-bold uppercase tracking-wider text-slate-500">Subcategoria</label>
+            <select id="xSub"
+              class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-[15px] outline-none focus:border-slate-900 focus:bg-white focus:ring-4 focus:ring-slate-900/10 dark:border-slate-700 dark:bg-slate-950 dark:focus:border-slate-400 dark:focus:ring-slate-400/15"></select>
+          </div>
+        </div>
+
+        <p id="fixErro" class="text-[13px] font-medium text-rose-600 dark:text-rose-400" hidden></p>
+
+        <div class="mt-1 flex gap-2">
+          <button id="btnFix"
+            class="flex-1 rounded-xl bg-slate-900 px-4 py-3 font-display text-[15px] font-bold text-white transition hover:bg-slate-800 active:scale-[0.99] dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200">Cadastrar</button>
+          <button id="btnFixCancelar" hidden
+            class="rounded-xl border border-slate-200 px-4 py-3 font-display text-[15px] font-bold text-slate-500 transition hover:border-slate-400 hover:text-slate-900 dark:border-slate-700 dark:hover:border-slate-500 dark:hover:text-white">Cancelar</button>
+        </div>
+
+        <div id="boxExcluir" class="flex justify-center" hidden>
+          <button id="btnExcluirSempre" type="button"
+            class="rounded-lg px-2 py-1 text-[12px] font-medium text-slate-400 underline underline-offset-2 transition hover:text-rose-600 dark:hover:text-rose-400"></button>
+        </div>
+
+        <p class="text-[11.5px] leading-relaxed text-slate-400">
+          Cadastre uma vez e a conta aparece em todos os meses seguintes. O valor é por mês: ao salvar, você altera só o mês aberto — os meses anteriores ficam como estavam e os seguintes herdam este valor. O <strong>✕</strong> na lista tira a conta só do mês aberto.
+        </p>
+      </div>
+
+      <div class="mt-5 border-t border-slate-100 pt-4 dark:border-slate-800">
+        <div class="mb-1 flex items-baseline justify-between gap-3">
+          <h3 class="font-display text-[13px] font-bold uppercase tracking-wider text-slate-500">Contas de <span id="fixMes"></span></h3>
+          <span id="fixTotal" class="text-[12.5px] tabular-nums text-slate-400">—</span>
+        </div>
+        <div id="listaFix" class="flex flex-col"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GRÁFICO POR CATEGORIA (%) ============ -->
+  <section id="cardCat" class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900" hidden>
+    <div class="mb-4 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+      <h2 class="font-display text-base font-bold">Por categoria</h2>
+      <span id="catEscopo" class="font-display text-[11px] font-bold uppercase tracking-wider text-slate-400">—</span>
+    </div>
+    <div id="catAlerta" class="mb-3 flex items-start gap-2 rounded-xl border border-rose-300 bg-rose-50 px-3.5 py-2.5 text-[12.5px] leading-relaxed text-rose-700 dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-300" hidden></div>
+    <div id="catBom" class="mb-3 flex items-start gap-2 rounded-xl border border-emerald-300 bg-emerald-50 px-3.5 py-2.5 text-[12.5px] leading-relaxed text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-300" hidden></div>
+    <div id="catBarra" class="flex h-3.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800"></div>
+    <div id="catLista" class="mt-3"></div>
+    <p id="catNota" class="mt-3 text-[12px] leading-relaxed text-slate-400"></p>
+  </section>
+
+  <!-- ============ ROSCA POR SUBCATEGORIA ============ -->
+  <section id="cardSub" class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900" hidden>
+    <div class="mb-4 flex items-baseline justify-between gap-3">
+      <h2 class="font-display text-base font-bold">Por subcategoria</h2>
+      <span id="subEscopo" class="font-display text-[11px] font-bold uppercase tracking-wider text-slate-400">—</span>
+    </div>
+    <div class="flex flex-wrap items-center gap-5">
+      <div class="mx-auto w-[168px] shrink-0 sm:mx-0">
+        <svg id="rosca" viewBox="0 0 240 240" role="img" aria-label="Divisão das saídas por subcategoria"></svg>
+      </div>
+      <div id="subLista" class="min-w-0 flex-1 basis-56"></div>
+    </div>
+  </section>
+
+  <!-- ============ BARRAS DOS MESES ============ -->
+  <section id="cardHist" class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900" hidden>
+    <div class="mb-4 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+      <h2 class="font-display text-base font-bold">Últimos meses</h2>
+      <div class="flex gap-3 text-[11px] text-slate-500">
+        <span class="flex items-center gap-1.5"><i class="h-2 w-2 rounded-sm bg-emerald-500"></i>Receitas</span>
+        <span class="flex items-center gap-1.5"><i class="h-2 w-2 rounded-sm bg-rose-500"></i>Despesas</span>
+        <span class="flex items-center gap-1.5"><i class="h-2 w-2 rounded-sm bg-violet-500"></i>Investim.</span>
+      </div>
+    </div>
+    <div class="no-scrollbar overflow-x-auto">
+      <svg id="barras" viewBox="0 0 700 220" class="block h-auto w-full min-w-[460px]" role="img" aria-label="Receitas, despesas e investimentos dos últimos meses"></svg>
+    </div>
+  </section>
+
+  <!-- ============ HISTÓRICO ============ -->
+  <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+    <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+      <h2 class="font-display text-base font-bold">Histórico <span id="conta" class="ml-1 font-medium text-slate-400"></span></h2>
+      <div class="flex rounded-xl border border-slate-200 p-0.5 dark:border-slate-700" role="group" aria-label="Filtrar histórico">
+        <button data-filtro="todos" class="filtro rounded-[9px] px-2.5 py-1.5 font-display text-[12px] font-bold">Todos</button>
+        <button data-filtro="receita" class="filtro rounded-[9px] px-2.5 py-1.5 font-display text-[12px] font-bold">Receitas</button>
+        <button data-filtro="despesa" class="filtro rounded-[9px] px-2.5 py-1.5 font-display text-[12px] font-bold">Despesas</button>
+        <button data-filtro="investimento" class="filtro rounded-[9px] px-2.5 py-1.5 font-display text-[12px] font-bold">Invest.</button>
+      </div>
+    </div>
+    <div id="avisoFix" class="mb-1 rounded-xl bg-slate-50 px-3.5 py-2.5 text-[12.5px] text-slate-500 dark:bg-slate-950 dark:text-slate-400" hidden></div>
+    <div id="lista" class="flex flex-col"></div>
+  </section>
+
+  <p id="status" class="px-1 text-center text-[11.5px] text-slate-400">Seus dados ficam salvos neste aparelho.</p>
+</div>
+
+<script>
+/* ======================= configuração ======================= */
+const INV = "INVESTIMENTO";
+const CATEGORIAS = [
+  { id: "NECESSIDADE", nome: "Necessidade", meta: 0.50, cor: "#0ea5e9" },
+  { id: "LAZER",       nome: "Lazer",       meta: 0.30, cor: "#f59e0b" },
+  { id: INV,           nome: "Investimento",meta: 0.20, cor: "#8b5cf6" }
+];
+const SUB_INV = "Investimento";
+const SUBS = {
+  despesa: [
+    { nome: "Alimentação", cor: "#f97316" },
+    { nome: "Transporte",  cor: "#3b82f6" },
+    { nome: "Lazer",       cor: "#a855f7" },
+    { nome: "Moradia",     cor: "#14b8a6" },
+    { nome: "Cartão",      cor: "#ec4899" },
+    { nome: "Outros",      cor: "#94a3b8" }
+  ],
+  receita: [
+    { nome: "Salário",       cor: "#10b981" },
+    { nome: "Investimentos", cor: "#0ea5e9" },
+    { nome: "Freelance",     cor: "#8b5cf6" },
+    { nome: "Cartão",        cor: "#ec4899" },
+    { nome: "Outros",        cor: "#94a3b8" }
+  ],
+  investimento: [ { nome: SUB_INV, cor: "#8b5cf6" } ]
+};
+const ENTRADAS = [
+  { id: "vale",      campo: "eVale",      rot: "Vale" },
+  { id: "pagamento", campo: "ePagamento", rot: "Pagamento" },
+  { id: "ferias",    campo: "eFerias",    rot: "Férias" },
+  { id: "plr",       campo: "ePlr",       rot: "PLR" },
+  { id: "abono",     campo: "eAbono",     rot: "Abono" },
+  { id: "decimo",    campo: "eDecimo",    rot: "13º" },
+  { id: "decimo14",  campo: "eDecimo14",  rot: "14º" }
+];
+const MESES = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+const MESES_LONGO = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+const LS = "minhas-financas-v2", LS_ANTIGO = "minhas-financas-v1";
+
+let tx = [], fixas = [], meses = {};
+let mes = hojeISO().slice(0, 7);
+let editando = null, editandoFix = null;
+let confirmando = null, confirmandoFix = null, confirmandoSempre = false;
+let filtro = "todos", aba = "lanc";
+
+/* ======================= utilidades ======================= */
+function hojeISO() {
+  const d = new Date();
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+}
+const brl = v => (Number(v) || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+function rotuloMes(k, longo) {
+  const p = k.split("-");
+  return (longo ? MESES_LONGO[Number(p[1]) - 1] : MESES[Number(p[1]) - 1]) + (longo ? " de " : "/") + p[0];
+}
+const rotuloCurto = k => MESES[Number(k.split("-")[1]) - 1] + "/" + k.slice(2, 4);
+function desloca(k, n) {
+  const [a, m] = k.split("-").map(Number);
+  const d = new Date(a, m - 1 + n, 1);
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+}
+function ultimoDia(k) {
+  const [a, m] = k.split("-").map(Number);
+  return new Date(a, m, 0).getDate();
+}
+function parseValor(s) {
+  let t = String(s).replace(/[^\d.,-]/g, "").trim();
+  if (!t) return NaN;
+  const temV = t.includes(","), temP = t.includes(".");
+  if (temV && temP) t = t.replace(/\./g, "").replace(",", ".");
+  else if (temV) t = t.replace(",", ".");
+  else if (temP && /\.\d{3}\b/.test(t) && !/\.\d{1,2}$/.test(t)) t = t.replace(/\./g, "");
+  return parseFloat(t);
+}
+const fmtInp = v => v ? Number(v).toFixed(2).replace(".", ",") : "";
+const el = (tag, cls, txt) => {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (txt != null) e.textContent = txt;
+  return e;
+};
+const catDe = id => CATEGORIAS.find(c => c.id === id) || CATEGORIAS[0];
+function subDe(tipo, nome) {
+  const lista = SUBS[tipo] || SUBS.despesa;
+  return lista.find(s => s.nome === nome)
+      || SUBS.despesa.find(s => s.nome === nome)
+      || SUBS.investimento.find(s => s.nome === nome)
+      || SUBS.receita.find(s => s.nome === nome)
+      || { nome: nome || "Outros", cor: "#94a3b8" };
+}
+
+/* ======================= persistência ======================= */
+function carregar() {
+  let d = null;
+  try {
+    d = JSON.parse(localStorage.getItem(LS) || "null");
+    if (!d) {
+      const velho = JSON.parse(localStorage.getItem(LS_ANTIGO) || "null");
+      if (velho) {
+        const lista = Array.isArray(velho) ? velho : (velho.tx || []);
+        d = { tx: lista.map(t => ({ id: t.id, data: t.data, desc: t.desc, valor: t.valor,
+                                    tipo: t.tipo, sub: t.sub || t.cat || "Outros", cat: null })) };
+      }
+    }
+  } catch (e) {
+    document.getElementById("status").textContent =
+      "Este navegador não permitiu salvar — os dados valem só até você fechar a página.";
+  }
+  if (d) {
+    tx = Array.isArray(d.tx) ? d.tx : [];
+    fixas = Array.isArray(d.fixas) ? d.fixas : [];
+    meses = (d.meses && typeof d.meses === "object") ? d.meses : {};
+  }
+  const tipos = ["despesa", "receita", "investimento"];
+  tx = tx.filter(t => t && t.id && t.data).map(t => {
+    const tipo = tipos.includes(t.tipo) ? t.tipo : "despesa";
+    return {
+      id: t.id, data: t.data, desc: t.desc || "(sem descrição)",
+      tipo, valor: Number(t.valor) || 0,
+      sub: tipo === "investimento" ? SUB_INV : (t.sub || "Outros"),
+      cat: tipo === "receita" ? null : (tipo === "investimento" ? INV : (t.cat || "NECESSIDADE"))
+    };
+  });
+  fixas = fixas.filter(f => f && f.id).map(f => {
+    const cat = CATEGORIAS.some(c => c.id === f.cat) ? f.cat : "NECESSIDADE";
+    return {
+      id: f.id, nome: f.nome || "(sem nome)", dia: f.dia || "", cat,
+      sub: cat === INV ? SUB_INV : (f.sub || "Outros"),
+      valor: Number(f.valor) || 0,
+      valores: (f.valores && typeof f.valores === "object") ? f.valores : {},
+      off: (f.off && typeof f.off === "object") ? f.off : {},
+      desde: f.desde || "2000-01"
+    };
+  });
+}
+function salvar() {
+  try { localStorage.setItem(LS, JSON.stringify({ v: 2, tx, fixas, meses })); } catch (e) {}
+}
+
+/* ======================= cálculos ======================= */
+const doMes = k => tx.filter(t => t.data.slice(0, 7) === k);
+const dadosMes = k => meses[k] || {};
+const valeNoMes = (f, k) => !f.desde || k >= f.desde;
+const foraNoMes = (f, k) => !!(f.off || {})[k];
+function valorFixa(f, k) {
+  if (!valeNoMes(f, k) || foraNoMes(f, k)) return 0;
+  const v = f.valores || {};
+  if (v[k] != null) return Number(v[k]) || 0;
+  let ultimo = null;
+  for (const kk in v) if (kk < k && (ultimo === null || kk > ultimo)) ultimo = kk;
+  if (ultimo !== null) return Number(v[ultimo]) || 0;
+  return Number(f.valor) || 0;
+}
+const ajustadaEm = (f, k) => (f.valores || {})[k] != null;
+const fixasDoMes = k => fixas.filter(f => valeNoMes(f, k));
+function somaFixas(k, investimento) {
+  return fixasDoMes(k)
+    .filter(f => (f.cat === INV) === !!investimento)
+    .reduce((s, f) => s + valorFixa(f, k), 0);
+}
+function contaFixas(k, investimento) {
+  return fixasDoMes(k).filter(f => (f.cat === INV) === !!investimento && valorFixa(f, k) > 0).length;
+}
+function entradasFixas(k) {
+  const m = dadosMes(k);
+  return ENTRADAS.reduce((s, e) => s + (Number(m[e.id]) || 0), 0);
+}
+function totais(k) {
+  let rl = 0, dl = 0, il = 0, nr = 0, nd = 0, ni = 0;
+  doMes(k).forEach(t => {
+    if (t.tipo === "receita") { rl += t.valor; nr++; }
+    else if (t.tipo === "investimento") { il += t.valor; ni++; }
+    else { dl += t.valor; nd++; }
+  });
+  const ent = entradasFixas(k);
+  const fixD = somaFixas(k, false), fixI = somaFixas(k, true);
+  const nfixD = contaFixas(k, false), nfixI = contaFixas(k, true);
+  const inicial = Number(dadosMes(k).saldoInicial) || 0;
+  const receitas = ent + rl, despesas = fixD + dl, investimentos = fixI + il;
+  return { receitas, despesas, investimentos, ent, rl, dl, il, fixD, fixI,
+           nr, nd, ni, nfixD, nfixI, inicial,
+           comprometido: despesas + investimentos,
+           saldo: inicial + receitas - despesas - investimentos,
+           movimento: nr + nd + ni + nfixD + nfixI > 0 || ent > 0 || inicial > 0 };
+}
+
+/* ======================= resumo ======================= */
+function renderResumo() {
+  const t = totais(mes);
+  const neg = t.saldo < 0;
+
+  const saldo = document.getElementById("saldo");
+  saldo.textContent = brl(t.saldo);
+  saldo.className = "mt-1 font-display text-4xl font-extrabold tabular-nums tracking-tight " +
+    (neg ? "text-rose-400" : "text-white");
+
+  const tag = document.getElementById("saldoTag");
+  if (!t.movimento) {
+    tag.textContent = rotuloMes(mes);
+    tag.className = "rounded-full bg-slate-800 px-2.5 py-1 text-[11px] font-semibold text-slate-400";
+  } else if (neg) {
+    tag.textContent = "no vermelho";
+    tag.className = "rounded-full bg-rose-500/15 px-2.5 py-1 text-[11px] font-semibold text-rose-300";
+  } else {
+    tag.textContent = "no azul";
+    tag.className = "rounded-full bg-emerald-500/15 px-2.5 py-1 text-[11px] font-semibold text-emerald-300";
+  }
+
+  const sub = document.getElementById("saldoSub");
+  if (!t.movimento) {
+    sub.textContent = "Informe as entradas de " + rotuloMes(mes, true) + " para começar.";
+  } else {
+    const partes = [rotuloMes(mes, true)];
+    if (t.inicial) partes.push("inclui " + brl(t.inicial) + " que já estava na conta");
+    if (t.receitas > 0) partes.push("você comprometeu " + Math.round(t.comprometido / t.receitas * 100) + "% do que entrou");
+    sub.textContent = partes.join(" · ");
+  }
+
+  document.getElementById("receitas").textContent = brl(t.receitas);
+  document.getElementById("despesas").textContent = brl(t.despesas);
+  document.getElementById("investimentos").textContent = brl(t.investimentos);
+  const resumir = (fix, lanc) =>
+    [fix ? fix + (fix === 1 ? " fixa" : " fixas") : null,
+     lanc ? lanc + (lanc === 1 ? " lanç." : " lanç.") : null].filter(Boolean).join(" · ") || "nada ainda";
+  document.getElementById("receitasSub").textContent =
+    [t.ent ? "entradas do mês" : null, t.nr ? t.nr + " lanç." : null].filter(Boolean).join(" · ") || "nada ainda";
+  document.getElementById("despesasSub").textContent = resumir(t.nfixD, t.nd);
+  document.getElementById("investimentosSub").textContent = resumir(t.nfixI, t.ni);
+
+  const barra = document.getElementById("barraGasto");
+  const uso = t.receitas > 0 ? Math.min(t.comprometido / t.receitas * 100, 100) : (t.comprometido > 0 ? 100 : 0);
+  barra.style.width = uso + "%";
+  barra.className = "h-full transition-all duration-500 " + (neg ? "bg-rose-400" : "bg-emerald-400");
+}
+
+/* ======================= entradas do mês ======================= */
+function renderEntradas() {
+  const m = dadosMes(mes);
+  document.getElementById("labPagamento").textContent = "Pagamento (dia " + ultimoDia(mes) + ")";
+  const si = document.getElementById("eSaldoInicial");
+  if (document.activeElement !== si) si.value = fmtInp(m.saldoInicial);
+  ENTRADAS.forEach(e => {
+    const inp = document.getElementById(e.campo);
+    if (document.activeElement !== inp) inp.value = fmtInp(m[e.id]);
+  });
+  const total = entradasFixas(mes);
+  const detalhe = ENTRADAS.filter(e => Number(m[e.id]) > 0).map(e => e.rot);
+  document.getElementById("entTotal").textContent = total
+    ? brl(total) + (detalhe.length > 1 ? " · " + detalhe.join(" + ") : "")
+    : "nada informado em " + rotuloMes(mes);
+}
+let tmr;
+function mexeMes(campo, valor) {
+  meses[mes] = { ...(meses[mes] || {}), [campo]: valor };
+  render();
+  clearTimeout(tmr);
+  tmr = setTimeout(salvar, 500);
+}
+
+/* ======================= por categoria ======================= */
+function somaPorCategoria(k) {
+  const p = { NECESSIDADE: 0, LAZER: 0, INVESTIMENTO: 0 };
+  fixasDoMes(k).forEach(f => { p[f.cat] = (p[f.cat] || 0) + valorFixa(f, k); });
+  doMes(k).forEach(t => { if (t.tipo !== "receita") p[t.cat] = (p[t.cat] || 0) + t.valor; });
+  return p;
+}
+const PILL = {
+  bom: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300",
+  ruim: "bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300",
+  atencao: "bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300",
+  neutro: "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
+};
+function statusCat(c, perc, val) {
+  const m = c.meta * 100;
+  if (val <= 0) return { txt: "nada aqui ainda", cls: "neutro" };
+  if (c.id === INV) {
+    if (perc >= m + 0.5) return { txt: "acima da meta — ótimo sinal", cls: "bom" };
+    if (perc >= m - 0.5) return { txt: "na meta", cls: "bom" };
+    return { txt: "abaixo da meta", cls: "atencao" };
+  }
+  if (perc > m + 0.5) return { txt: "acima da meta", cls: "ruim" };
+  if (perc >= m - 0.5) return { txt: "na meta", cls: "bom" };
+  return { txt: "dentro da meta", cls: "bom" };
+}
+function renderCategorias() {
+  const card = document.getElementById("cardCat");
+  const p = somaPorCategoria(mes);
+  const total = CATEGORIAS.reduce((s, c) => s + (p[c.id] || 0), 0);
+  if (total <= 0) { card.hidden = true; return; }
+  card.hidden = false;
+  document.getElementById("catEscopo").textContent = rotuloMes(mes);
+
+  const perc = c => (p[c.id] || 0) / total * 100;
+
+  /* alerta vermelho: necessidade e/ou lazer acima da meta */
+  const estouradas = CATEGORIAS.filter(c => c.id !== INV && (p[c.id] || 0) > 0 && perc(c) > c.meta * 100 + 0.5);
+  const alerta = document.getElementById("catAlerta");
+  if (estouradas.length) {
+    alerta.hidden = false;
+    alerta.textContent = "";
+    const ic = el("span", "shrink-0", "▲");
+    ic.setAttribute("aria-hidden", "true");
+    const txt = el("span", null,
+      estouradas.map(c => c.nome + " em " + perc(c).toFixed(0) + "% (meta " + (c.meta * 100) + "%)").join(" e ") +
+      ". " + (estouradas.length > 1 ? "Essas categorias estão" : "Essa categoria está") +
+      " consumindo mais do que o planejado.");
+    alerta.append(ic, txt);
+  } else alerta.hidden = true;
+
+  /* sinal verde: investimento acima da meta */
+  const inv = catDe(INV);
+  const bom = document.getElementById("catBom");
+  if ((p[INV] || 0) > 0 && perc(inv) > inv.meta * 100 + 0.5) {
+    bom.hidden = false;
+    bom.textContent = "";
+    const ic = el("span", "shrink-0", "★");
+    ic.setAttribute("aria-hidden", "true");
+    bom.append(ic, el("span", null, "Investimento em " + perc(inv).toFixed(0) +
+      "% (meta " + (inv.meta * 100) + "%). Acima da meta aqui é bom sinal."));
+  } else bom.hidden = true;
+
+  const barra = document.getElementById("catBarra");
+  barra.textContent = "";
+  CATEGORIAS.forEach(c => {
+    const v = p[c.id] || 0;
+    if (v <= 0) return;
+    const seg = el("div", "h-full");
+    seg.style.width = (v / total * 100).toFixed(2) + "%";
+    seg.style.background = c.cor;
+    seg.title = c.nome + " · " + brl(v) + " · " + (v / total * 100).toFixed(1) + "%";
+    barra.append(seg);
+  });
+
+  const lista = document.getElementById("catLista");
+  lista.textContent = "";
+  CATEGORIAS.forEach(c => {
+    const v = p[c.id] || 0, pc = perc(c);
+    const st = statusCat(c, pc, v);
+    const bloco = el("div", "border-b border-slate-100 py-2.5 last:border-0 dark:border-slate-800");
+    const linha = el("div", "flex items-baseline justify-between gap-3");
+    const nome = el("span", "flex min-w-0 items-center gap-2 text-[14px] font-medium");
+    const dot = el("i", "h-2.5 w-2.5 shrink-0 rounded-sm");
+    dot.style.background = c.cor;
+    nome.append(dot, document.createTextNode(c.nome));
+    const vals = el("span", "flex shrink-0 items-baseline gap-2");
+    vals.append(el("span", "text-[13px] tabular-nums text-slate-500", brl(v)));
+    vals.append(el("span", "w-14 text-right text-[15px] font-bold tabular-nums " +
+      (st.cls === "ruim" ? "text-rose-600 dark:text-rose-400"
+       : st.cls === "bom" && c.id === INV ? "text-emerald-600 dark:text-emerald-400" : ""),
+      pc.toFixed(0) + "%"));
+    linha.append(nome, vals);
+    const baixo = el("div", "mt-1.5 flex flex-wrap items-center gap-2");
+    baixo.append(el("span", "rounded-full px-2 py-0.5 text-[11px] font-semibold " + PILL[st.cls], st.txt));
+    baixo.append(el("span", "text-[11px] text-slate-400", "meta " + (c.meta * 100) + "%"));
+    bloco.append(linha, baixo);
+    lista.append(bloco);
+  });
+
+  const t = totais(mes);
+  document.getElementById("catNota").textContent = t.receitas > 0
+    ? "As três categorias somam " + brl(total) + ", que é " +
+      Math.round(total / t.receitas * 100) + "% das entradas de " + rotuloMes(mes, true) +
+      ". As porcentagens dividem esse total entre as categorias; as metas seguem a regra 50/30/20."
+    : "As três categorias somam " + brl(total) + ". Informe as entradas do mês para comparar com a sua renda.";
+}
+
+/* ======================= rosca por subcategoria ======================= */
+function renderSubs() {
+  const card = document.getElementById("cardSub");
+  const soma = {};
+  fixasDoMes(mes).forEach(f => {
+    const v = valorFixa(f, mes);
+    if (v > 0) soma[f.sub] = (soma[f.sub] || 0) + v;
+  });
+  doMes(mes).forEach(t => { if (t.tipo !== "receita") soma[t.sub] = (soma[t.sub] || 0) + t.valor; });
+  const total = Object.values(soma).reduce((a, b) => a + b, 0);
+  if (total <= 0) { card.hidden = true; return; }
+  card.hidden = false;
+  document.getElementById("subEscopo").textContent = rotuloMes(mes);
+
+  const faixas = Object.keys(soma)
+    .map(n => ({ nome: n, val: soma[n], cor: subDe("despesa", n).cor }))
+    .sort((a, b) => b.val - a.val);
+  desenhaRosca(document.getElementById("rosca"), faixas, total);
+
+  const lista = document.getElementById("subLista");
+  lista.textContent = "";
+  faixas.forEach(f => {
+    const pc = f.val / total * 100;
+    const linha = el("div", "border-b border-slate-100 py-2.5 last:border-0 dark:border-slate-800");
+    const topo = el("div", "flex items-baseline justify-between gap-3");
+    const nome = el("span", "flex min-w-0 items-center gap-2 text-[14px] font-medium");
+    const dot = el("i", "h-2.5 w-2.5 shrink-0 rounded-sm");
+    dot.style.background = f.cor;
+    nome.append(dot, document.createTextNode(f.nome));
+    const vals = el("span", "flex shrink-0 items-baseline gap-2");
+    vals.append(el("span", "text-[13px] tabular-nums text-slate-500", brl(f.val)));
+    vals.append(el("span", "w-11 text-right text-[13px] font-bold tabular-nums", pc.toFixed(0) + "%"));
+    topo.append(nome, vals);
+    const trilha = el("div", "mt-1.5 h-1 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800");
+    const fill = el("div", "h-full rounded-full");
+    fill.style.width = pc.toFixed(1) + "%";
+    fill.style.background = f.cor;
+    trilha.append(fill);
+    linha.append(topo, trilha);
+    lista.append(linha);
+  });
+}
+
+function desenhaRosca(svg, faixas, total) {
+  const ns = "http://www.w3.org/2000/svg";
+  svg.textContent = "";
+  const add = (tag, attrs, txt) => {
+    const e = document.createElementNS(ns, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (txt != null) e.textContent = txt;
+    svg.appendChild(e);
+    return e;
+  };
+  const cx = 120, cy = 120, R = 104, ri = 70, meio = (R + ri) / 2, esp = R - ri;
+  const vis = faixas.filter(f => f.val > 0);
+  if (vis.length === 1) {
+    add("circle", { cx, cy, r: meio, fill: "none", stroke: vis[0].cor, "stroke-width": esp });
+  } else {
+    const pt = (ang, rad) => [cx + rad * Math.cos(ang), cy + rad * Math.sin(ang)];
+    let a = -Math.PI / 2;
+    vis.forEach(f => {
+      const a2 = a + (f.val / total) * Math.PI * 2;
+      const grande = (a2 - a) > Math.PI ? 1 : 0;
+      const [x0, y0] = pt(a, R), [x1, y1] = pt(a2, R), [x2, y2] = pt(a2, ri), [x3, y3] = pt(a, ri);
+      const d = "M" + x0.toFixed(2) + " " + y0.toFixed(2) +
+                " A" + R + " " + R + " 0 " + grande + " 1 " + x1.toFixed(2) + " " + y1.toFixed(2) +
+                " L" + x2.toFixed(2) + " " + y2.toFixed(2) +
+                " A" + ri + " " + ri + " 0 " + grande + " 0 " + x3.toFixed(2) + " " + y3.toFixed(2) + " Z";
+      const pth = add("path", { d, fill: f.cor, stroke: "#ffffff00", "stroke-width": 2.5 });
+      const ti = document.createElementNS(ns, "title");
+      ti.textContent = f.nome + " · " + brl(f.val) + " · " + (f.val / total * 100).toFixed(1) + "%";
+      pth.appendChild(ti);
+      a = a2;
+    });
+  }
+  add("text", { x: cx, y: cy - 1, "text-anchor": "middle", fill: "currentColor",
+    "font-size": 17, "font-weight": 700, "font-family": "Plus Jakarta Sans, sans-serif" }, brl(total));
+  add("text", { x: cx, y: cy + 19, "text-anchor": "middle", fill: "#94a3b8",
+    "font-size": 11, "font-family": "Inter, sans-serif" }, "em saídas");
+}
+
+/* ======================= barras dos meses ======================= */
+function renderBarras() {
+  const card = document.getElementById("cardHist");
+  const chaves = [];
+  for (let i = 5; i >= 0; i--) chaves.push(desloca(mes, -i));
+  const dados = chaves.map(k => ({ k, rot: rotuloMes(k), ...totais(k) }));
+  if (!dados.some(d => d.movimento)) { card.hidden = true; return; }
+  card.hidden = false;
+
+  const svg = document.getElementById("barras");
+  const ns = "http://www.w3.org/2000/svg";
+  svg.textContent = "";
+  const add = (tag, attrs, txt) => {
+    const e = document.createElementNS(ns, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (txt != null) e.textContent = txt;
+    svg.appendChild(e);
+    return e;
+  };
+  const W = 700, H = 220, ml = 8, mr = 8, mt = 18, mb = 34;
+  const iw = W - ml - mr, ih = H - mt - mb;
+  const max = Math.max(1, ...dados.map(d => d.movimento
+    ? Math.max(d.receitas, d.despesas, d.investimentos) : 0));
+  const top = Math.ceil(max / 100) * 100 || 100;
+  const y = v => mt + ih - (v / top) * ih;
+  const slot = iw / dados.length;
+  const lg = Math.min(slot * 0.2, 26), gap = 3;
+
+  for (let i = 0; i <= 3; i++) {
+    const v = top * i / 3;
+    add("line", { x1: ml, x2: W - mr, y1: y(v), y2: y(v), stroke: "#cbd5e1", "stroke-width": 1, opacity: i ? 0.45 : 0.9 });
+  }
+  dados.forEach((d, i) => {
+    const centro = ml + slot * (i + 0.5);
+    const atual = d.k === mes;
+    if (d.movimento) {
+      [["receitas", "#10b981", centro - 1.5 * lg - gap, "receitas"],
+       ["despesas", "#f43f5e", centro - 0.5 * lg, "despesas"],
+       ["investimentos", "#8b5cf6", centro + 0.5 * lg + gap, "investimentos"]
+      ].forEach(([campo, cor, x, rot]) => {
+        const v = d[campo];
+        if (v <= 0) return;
+        const alt = Math.max(3, y(0) - y(v));
+        const r = add("rect", { x, y: y(0) - alt, width: lg, height: alt, rx: 3,
+          fill: cor, opacity: atual ? 1 : 0.55 });
+        const ti = document.createElementNS(ns, "title");
+        ti.textContent = d.rot + " · " + rot + " " + brl(v);
+        r.appendChild(ti);
+      });
+    }
+    add("text", { x: centro, y: H - 14, "text-anchor": "middle",
+      fill: atual ? "currentColor" : "#94a3b8", "font-size": 12,
+      "font-weight": atual ? 700 : 400, "font-family": "Inter, sans-serif" }, d.rot);
+    if (d.movimento) {
+      const s = d.receitas - d.comprometido;
+      add("text", { x: centro, y: H - 1, "text-anchor": "middle",
+        fill: s < 0 ? "#f43f5e" : "#10b981", "font-size": 10.5,
+        "font-family": "Inter, sans-serif" }, (s < 0 ? "−" : "+") + brl(Math.abs(s)).replace("R$ ", "R$"));
+    }
+  });
+  add("line", { x1: ml, x2: W - mr, y1: y(0), y2: y(0), stroke: "#94a3b8", "stroke-width": 1.2 });
+}
+
+/* ======================= lista de contas fixas ======================= */
+function renderFixas() {
+  const box = document.getElementById("listaFix");
+  box.textContent = "";
+  document.getElementById("fixMes").textContent = rotuloMes(mes);
+  const tot = somaFixas(mes, false) + somaFixas(mes, true);
+  document.getElementById("fixTotal").textContent = tot ? brl(tot) : "—";
+  document.getElementById("fixHint").textContent = editandoFix
+    ? "altere e toque em Salvar" : "vale de " + rotuloMes(mes) + " em diante";
+
+  const boxEx = document.getElementById("boxExcluir");
+  const btnEx = document.getElementById("btnExcluirSempre");
+  const alvoEx = editandoFix ? fixas.find(f => f.id === editandoFix) : null;
+  if (alvoEx) {
+    boxEx.hidden = false;
+    btnEx.textContent = confirmandoSempre
+      ? "Confirmar: apagar “" + alvoEx.nome + "” de todos os meses"
+      : "Excluir “" + alvoEx.nome + "” de todos os meses";
+    btnEx.className = "rounded-lg px-2 py-1 text-[12px] font-medium underline underline-offset-2 transition " +
+      (confirmandoSempre ? "text-rose-600 dark:text-rose-400" : "text-slate-400 hover:text-rose-600 dark:hover:text-rose-400");
+  } else {
+    boxEx.hidden = true;
+    confirmandoSempre = false;
+  }
+
+  const ativas = fixas.filter(f => valeNoMes(f, mes))
+    .sort((a, b) => (Number(a.dia) || 99) - (Number(b.dia) || 99) ||
+                    valorFixa(b, mes) - valorFixa(a, mes));
+  const futuras = fixas.filter(f => !valeNoMes(f, mes));
+
+  if (!ativas.length && !futuras.length) {
+    const vazio = el("div", "flex flex-col items-center gap-1 py-8 text-center");
+    vazio.append(el("p", "font-display text-[15px] font-bold text-slate-400", "Nenhuma conta fixa"));
+    vazio.append(el("p", "max-w-[260px] text-[13px] text-slate-400",
+      "Comece pelas que se repetem todo mês: moradia, luz, telefone, cartões, aportes."));
+    box.append(vazio);
+    return;
+  }
+
+  ativas.forEach(f => {
+    const fora = foraNoMes(f, mes);
+    const v = valorFixa(f, mes);
+    const c = catDe(f.cat);
+    const row = el("div", "flex items-center gap-3 border-b border-slate-100 py-3 last:border-0 dark:border-slate-800" +
+      (editandoFix === f.id ? " -mx-3 rounded-xl bg-slate-100 px-3 dark:bg-slate-800/60" : ""));
+
+    const ic = el("span", "grid h-9 w-9 shrink-0 place-items-center rounded-full text-[12px] font-bold");
+    ic.style.background = fora ? "#94a3b822" : c.cor + "22";
+    ic.style.color = fora ? "#94a3b8" : c.cor;
+    ic.textContent = f.dia ? String(f.dia) : "—";
+    ic.title = f.dia ? "vence dia " + f.dia : "sem dia definido";
+
+    const meio = el("div", "min-w-0 flex-1");
+    meio.append(el("p", "truncate text-[15px] font-medium" + (fora || v <= 0 ? " v-dim" : ""), f.nome));
+    const tags = el("div", "mt-0.5 flex items-center gap-2");
+    tags.append(el("span", "rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-500 dark:bg-slate-800 dark:text-slate-400", f.sub));
+    tags.append(el("span", "text-[11px] text-slate-400", c.nome));
+    if (!fora && ajustadaEm(f, mes)) tags.append(el("span", "text-[11px] text-slate-400", "· ajustada"));
+    meio.append(tags);
+
+    const vbox = el("div", "shrink-0 text-right");
+    vbox.append(el("p", "text-[15px] font-bold tabular-nums whitespace-nowrap " +
+      (fora || v <= 0 ? "v-dim" : (f.cat === INV ? "v-inv" : "v-fg")),
+      fora ? "fora do mês" : (v > 0 ? brl(v) : "sem valor")));
+
+    const acts = el("div", "flex shrink-0 gap-1");
+    const eb = el("button", "grid h-8 w-8 place-items-center rounded-lg text-[13px] text-slate-400 transition hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-white", "✎");
+    eb.type = "button";
+    eb.setAttribute("aria-label", "Editar " + f.nome);
+    eb.setAttribute("aria-pressed", String(editandoFix === f.id));
+    eb.onclick = () => { editandoFix === f.id ? (fimEdicaoFixa(), render()) : iniciarEdicaoFixa(f); };
+    acts.append(eb);
+
+    if (fora) {
+      const vb = el("button", "rounded-lg bg-slate-100 px-2.5 py-1.5 text-[11.5px] font-bold text-slate-600 transition hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300", "voltar");
+      vb.type = "button";
+      vb.setAttribute("aria-label", "Trazer " + f.nome + " de volta para " + rotuloMes(mes));
+      vb.onclick = () => {
+        const o = { ...(f.off || {}) };
+        delete o[mes];
+        f.off = o;
+        salvar(); render();
+      };
+      acts.append(vb);
+    } else {
+      const armado = confirmandoFix === f.id;
+      const db = el("button",
+        armado ? "rounded-lg bg-rose-600 px-2.5 py-1.5 font-display text-[11.5px] font-bold text-white"
+               : "grid h-8 w-8 place-items-center rounded-lg text-[14px] text-slate-400 transition hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/40 dark:hover:text-rose-400",
+        armado ? "Tirar de " + rotuloCurto(mes) : "✕");
+      db.type = "button";
+      db.setAttribute("aria-label", armado
+        ? "Confirmar: tirar " + f.nome + " apenas de " + rotuloMes(mes)
+        : "Tirar " + f.nome + " de " + rotuloMes(mes));
+      db.title = armado ? "Tira só de " + rotuloMes(mes) + "; os outros meses ficam" : "Tirar de " + rotuloMes(mes);
+      db.onclick = () => {
+        if (!armado) { confirmandoFix = f.id; render(); return; }
+        confirmandoFix = null;
+        f.off = { ...(f.off || {}), [mes]: true };
+        salvar(); render();
+      };
+      acts.append(db);
+    }
+
+    row.append(ic, meio, vbox, acts);
+    box.append(row);
+  });
+
+  if (futuras.length) {
+    const nota = el("div", "mt-3 flex flex-col gap-2 rounded-xl border border-dashed border-slate-300 px-3 py-2.5 dark:border-slate-700");
+    nota.append(el("p", "text-[12px] text-slate-400",
+      futuras.length === 1 ? "1 conta cadastrada depois deste mês:" : futuras.length + " contas cadastradas depois deste mês:"));
+    futuras.forEach(f => {
+      const linha = el("div", "flex items-center justify-between gap-3");
+      linha.append(el("span", "truncate text-[13px] text-slate-500", f.nome + " · começa em " + rotuloMes(f.desde)));
+      const b = el("button", "shrink-0 rounded-lg bg-slate-100 px-2.5 py-1 text-[11.5px] font-bold text-slate-600 transition hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300", "incluir aqui");
+      b.type = "button";
+      b.onclick = () => { f.desde = mes; salvar(); render(); };
+      linha.append(b);
+      nota.append(linha);
+    });
+    box.append(nota);
+  }
+}
+
+/* ======================= histórico ======================= */
+function renderLista() {
+  const box = document.getElementById("lista");
+  box.textContent = "";
+  const t = totais(mes);
+  const todos = doMes(mes);
+  const itens = todos.filter(x => filtro === "todos" || x.tipo === filtro)
+                     .sort((a, b) => b.data.localeCompare(a.data) || (a.id < b.id ? 1 : -1));
+
+  document.querySelectorAll(".filtro").forEach(b => {
+    const on = b.dataset.filtro === filtro;
+    b.setAttribute("aria-pressed", String(on));
+    b.className = "filtro rounded-[9px] px-2.5 py-1.5 font-display text-[12px] font-bold transition " +
+      (on ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
+          : "text-slate-500 hover:text-slate-900 dark:hover:text-white");
+  });
+  document.getElementById("conta").textContent =
+    todos.length ? "· " + todos.length + (todos.length === 1 ? " lançamento" : " lançamentos") : "";
+
+  const aviso = document.getElementById("avisoFix");
+  const fix = t.fixD + t.fixI;
+  if (fix > 0) {
+    aviso.hidden = false;
+    aviso.textContent = "Fora desta lista, " + brl(fix) + " em contas fixas de " + rotuloMes(mes) +
+      (t.fixI > 0 ? " (inclui " + brl(t.fixI) + " em investimento)" : "") + " — veja na aba Contas fixas.";
+  } else aviso.hidden = true;
+
+  if (!itens.length) {
+    const vazio = el("div", "flex flex-col items-center gap-1 py-10 text-center");
+    vazio.append(el("p", "font-display text-[15px] font-bold text-slate-400",
+      todos.length ? "Nada neste filtro" : "Nenhum lançamento em " + rotuloMes(mes, true)));
+    vazio.append(el("p", "max-w-[260px] text-[13px] text-slate-400",
+      todos.length ? "Troque o filtro para ver os outros lançamentos."
+                   : "Aqui entram os gastos, receitas e aportes avulsos do mês."));
+    box.append(vazio);
+    return;
+  }
+
+  let diaAtual = "";
+  itens.forEach(item => {
+    if (item.data !== diaAtual) {
+      diaAtual = item.data;
+      const p = item.data.split("-");
+      const dSemana = new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString("pt-BR", { weekday: "short" }).replace(".", "");
+      const hdr = el("div", "sticky top-0 z-10 -mx-5 mt-2 flex items-baseline justify-between gap-3 bg-white/90 px-5 py-1.5 backdrop-blur-sm first:mt-0 dark:bg-slate-900/90");
+      hdr.append(el("span", "font-display text-[11px] font-bold uppercase tracking-wider text-slate-400",
+        p[2] + "/" + p[1] + " · " + dSemana));
+      const dia = itens.filter(x => x.data === item.data)
+                       .reduce((s, x) => s + (x.tipo === "receita" ? x.valor : -x.valor), 0);
+      hdr.append(el("span", "text-[11px] tabular-nums text-slate-400",
+        (dia < 0 ? "−" : "+") + brl(Math.abs(dia))));
+      box.append(hdr);
+    }
+
+    const rec = item.tipo === "receita", inv = item.tipo === "investimento";
+    const cor = rec ? subDe("receita", item.sub).cor : catDe(item.cat).cor;
+    const row = el("div", "flex items-center gap-3 border-b border-slate-100 py-3 last:border-0 dark:border-slate-800" +
+      (editando === item.id ? " -mx-3 rounded-xl bg-slate-100 px-3 dark:bg-slate-800/60" : ""));
+
+    const ic = el("span", "grid h-9 w-9 shrink-0 place-items-center rounded-full text-[13px] font-bold");
+    ic.style.background = cor + "22";
+    ic.style.color = cor;
+    ic.textContent = rec ? "↑" : (inv ? "★" : "↓");
+    ic.setAttribute("aria-hidden", "true");
+
+    const meio = el("div", "min-w-0 flex-1");
+    meio.append(el("p", "truncate text-[15px] font-medium", item.desc));
+    const tags = el("div", "mt-0.5 flex items-center gap-2");
+    tags.append(el("span", "rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-500 dark:bg-slate-800 dark:text-slate-400", item.sub));
+    tags.append(el("span", "text-[11px] text-slate-400", rec ? "receita" : catDe(item.cat).nome));
+    meio.append(tags);
+
+    const vbox = el("div", "shrink-0 text-right");
+    vbox.append(el("p", "text-[15px] font-bold tabular-nums whitespace-nowrap " +
+      (rec ? "v-pos" : (inv ? "v-inv" : "v-fg")),
+      (rec ? "+ " : "− ") + brl(item.valor)));
+
+    const acts = el("div", "flex shrink-0 gap-1");
+    const eb = el("button", "grid h-8 w-8 place-items-center rounded-lg text-[13px] text-slate-400 transition hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-white", "✎");
+    eb.type = "button";
+    eb.setAttribute("aria-label", "Editar " + item.desc);
+    eb.setAttribute("aria-pressed", String(editando === item.id));
+    eb.onclick = () => { editando === item.id ? (fimEdicao(), render()) : iniciarEdicao(item); };
+
+    const armado = confirmando === item.id;
+    const db = el("button",
+      armado ? "rounded-lg bg-rose-600 px-2.5 py-1.5 font-display text-[11.5px] font-bold text-white"
+             : "grid h-8 w-8 place-items-center rounded-lg text-[14px] text-slate-400 transition hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/40 dark:hover:text-rose-400",
+      armado ? "Apagar?" : "✕");
+    db.type = "button";
+    db.setAttribute("aria-label", armado
+      ? "Confirmar exclusão de " + item.desc + ", " + brl(item.valor)
+      : "Apagar " + item.desc);
+    db.onclick = () => {
+      if (!armado) { confirmando = item.id; render(); return; }
+      confirmando = null;
+      if (editando === item.id) fimEdicao();
+      tx = tx.filter(x => x.id !== item.id);
+      salvar(); render();
+    };
+    acts.append(eb, db);
+    row.append(ic, meio, vbox, acts);
+    box.append(row);
+  });
+}
+
+/* ======================= selects ======================= */
+function enche(sel, itens, manter) {
+  const antes = manter != null ? manter : sel.value;
+  sel.textContent = "";
+  itens.forEach(i => {
+    const o = document.createElement("option");
+    o.value = i.v; o.textContent = i.t;
+    sel.append(o);
+  });
+  sel.value = itens.some(i => i.v === antes) ? antes : itens[0].v;
+}
+const opcCat = CATEGORIAS.map(c => ({ v: c.id, t: c.nome }));
+const opcSub = tipo => (SUBS[tipo] || SUBS.despesa).map(s => ({ v: s.nome, t: s.nome }));
+
+/* lançamentos: tipo investimento trava categoria e subcategoria em Investimento */
+function atualizaLanc(sub, cat) {
+  const tipo = document.getElementById("fTipo").value;
+  const rec = tipo === "receita", inv = tipo === "investimento";
+  const selSub = document.getElementById("fSub"), selCat = document.getElementById("fCat");
+  enche(selSub, opcSub(tipo), inv ? SUB_INV : sub);
+  selSub.disabled = inv;
+  document.getElementById("boxCat").hidden = rec;
+  document.getElementById("boxTipo").className = "flex flex-col gap-1.5" + (rec ? " col-span-2" : "");
+  if (!rec) {
+    enche(selCat, opcCat, inv ? INV : cat);
+    selCat.disabled = inv;
+  }
+}
+/* contas fixas: categoria investimento trava a subcategoria em Investimento */
+function atualizaFixa(sub) {
+  const cat = document.getElementById("xCat").value;
+  const inv = cat === INV;
+  const selSub = document.getElementById("xSub");
+  enche(selSub, inv ? opcSub("investimento") : opcSub("despesa"), inv ? SUB_INV : sub);
+  selSub.disabled = inv;
+}
+
+/* ======================= formulário de lançamento ======================= */
+function erroEm(id, txt) {
+  const e = document.getElementById(id);
+  e.textContent = txt; e.hidden = false;
+  clearTimeout(erroEm["t" + id]);
+  erroEm["t" + id] = setTimeout(() => { e.hidden = true; }, 4000);
+}
+function iniciarEdicao(item) {
+  trocaAba("lanc");
+  editando = item.id; confirmando = null;
+  document.getElementById("fDesc").value = item.desc;
+  document.getElementById("fVal").value = fmtInp(item.valor);
+  document.getElementById("fData").value = item.data;
+  document.getElementById("fTipo").value = item.tipo;
+  atualizaLanc(item.sub, item.cat || "NECESSIDADE");
+  document.getElementById("formTitulo").textContent = "Editando lançamento";
+  document.getElementById("formHint").textContent = "altere e toque em Salvar";
+  document.getElementById("btnSalvar").textContent = "Salvar";
+  document.getElementById("btnCancelar").hidden = false;
+  render();
+  const f = document.getElementById("fDesc");
+  f.focus(); f.scrollIntoView({ block: "center", behavior: "smooth" });
+}
+function fimEdicao() {
+  editando = null;
+  document.getElementById("fDesc").value = "";
+  document.getElementById("fVal").value = "";
+  document.getElementById("fData").value = hojeISO();
+  document.getElementById("formTitulo").textContent = "Novo lançamento";
+  document.getElementById("formHint").textContent = "preencha e toque em Adicionar";
+  document.getElementById("btnSalvar").textContent = "Adicionar";
+  document.getElementById("btnCancelar").hidden = true;
+  document.getElementById("formErro").hidden = true;
+}
+function enviar() {
+  const desc = document.getElementById("fDesc").value.trim();
+  const valor = parseValor(document.getElementById("fVal").value);
+  const data = document.getElementById("fData").value || hojeISO();
+  const tipo = document.getElementById("fTipo").value;
+  const inv = tipo === "investimento";
+  const sub = inv ? SUB_INV : document.getElementById("fSub").value;
+  const cat = tipo === "receita" ? null : (inv ? INV : document.getElementById("fCat").value);
+
+  if (!desc) return erroEm("formErro", "Escreva uma descrição para o lançamento.");
+  if (!isFinite(valor) || valor <= 0) return erroEm("formErro", "Informe um valor maior que zero.");
+
+  if (editando) {
+    const alvo = tx.find(x => x.id === editando);
+    if (alvo) Object.assign(alvo, { desc, valor: Math.abs(valor), data, tipo, sub, cat });
+    fimEdicao();
+  } else {
+    tx.push({ id: uid(), desc, valor: Math.abs(valor), data, tipo, sub, cat });
+    document.getElementById("fDesc").value = "";
+    document.getElementById("fVal").value = "";
+    document.getElementById("fDesc").focus();
+  }
+  if (data.slice(0, 7) !== mes) mes = data.slice(0, 7);
+  confirmando = null;
+  salvar(); render();
+}
+
+/* ======================= formulário de conta fixa ======================= */
+function iniciarEdicaoFixa(f) {
+  trocaAba("fix");
+  editandoFix = f.id; confirmandoFix = null; confirmandoSempre = false;
+  document.getElementById("xNome").value = f.nome;
+  document.getElementById("xVal").value = fmtInp(valorFixa(f, mes));
+  document.getElementById("xDia").value = f.dia || "";
+  enche(document.getElementById("xCat"), opcCat, f.cat);
+  atualizaFixa(f.sub);
+  document.getElementById("fixTitulo").textContent = "Editando conta fixa";
+  document.getElementById("btnFix").textContent = "Salvar";
+  document.getElementById("btnFixCancelar").hidden = false;
+  render();
+  const c = document.getElementById("xNome");
+  c.focus(); c.scrollIntoView({ block: "center", behavior: "smooth" });
+}
+function fimEdicaoFixa() {
+  editandoFix = null; confirmandoSempre = false;
+  document.getElementById("xNome").value = "";
+  document.getElementById("xVal").value = "";
+  document.getElementById("xDia").value = "";
+  document.getElementById("fixTitulo").textContent = "Nova conta fixa";
+  document.getElementById("btnFix").textContent = "Cadastrar";
+  document.getElementById("btnFixCancelar").hidden = true;
+  document.getElementById("fixErro").hidden = true;
+}
+function enviarFixa() {
+  const nome = document.getElementById("xNome").value.trim();
+  const bruto = document.getElementById("xVal").value.trim();
+  const valor = bruto === "" ? 0 : parseValor(bruto);
+  const diaTxt = document.getElementById("xDia").value.trim();
+  const diaN = parseInt(diaTxt, 10);
+  const cat = document.getElementById("xCat").value;
+  const sub = cat === INV ? SUB_INV : document.getElementById("xSub").value;
+
+  if (!nome) return erroEm("fixErro", "Dê um nome à conta fixa.");
+  if (!isFinite(valor) || valor < 0) return erroEm("fixErro", "Informe um valor válido.");
+  if (diaTxt && (!isFinite(diaN) || diaN < 1 || diaN > 31))
+    return erroEm("fixErro", "O dia de vencimento vai de 1 a 31.");
+  const dia = isFinite(diaN) ? String(diaN) : "";
+
+  if (editandoFix) {
+    const alvo = fixas.find(x => x.id === editandoFix);
+    if (alvo) {
+      alvo.nome = nome; alvo.dia = dia; alvo.cat = cat; alvo.sub = sub;
+      alvo.valores = { ...(alvo.valores || {}), [mes]: valor };
+      if (!alvo.valor) alvo.valor = valor;
+      const o = { ...(alvo.off || {}) };
+      delete o[mes];
+      alvo.off = o;
+    }
+    fimEdicaoFixa();
+  } else {
+    fixas.push({ id: uid(), nome, dia, cat, sub, valor,
+                 valores: { [mes]: valor }, off: {}, desde: mes });
+    document.getElementById("xNome").value = "";
+    document.getElementById("xVal").value = "";
+    document.getElementById("xDia").value = "";
+    document.getElementById("xNome").focus();
+  }
+  confirmandoFix = null;
+  salvar(); render();
+}
+function excluirSempre() {
+  const alvo = fixas.find(f => f.id === editandoFix);
+  if (!alvo) return;
+  if (!confirmandoSempre) { confirmandoSempre = true; renderFixas(); return; }
+  fixas = fixas.filter(f => f.id !== alvo.id);
+  fimEdicaoFixa();
+  salvar(); render();
+}
+
+/* ======================= abas ======================= */
+function trocaAba(qual) {
+  aba = qual;
+  const lanc = qual === "lanc";
+  document.getElementById("paneLanc").hidden = !lanc;
+  document.getElementById("paneFix").hidden = lanc;
+  [["abaLanc", lanc], ["abaFix", !lanc]].forEach(([id, on]) => {
+    const b = document.getElementById(id);
+    b.setAttribute("aria-selected", String(on));
+    b.className = "aba flex-1 rounded-[9px] px-3 py-2 font-display text-[13px] font-bold transition " +
+      (on ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
+          : "text-slate-500 hover:text-slate-900 dark:hover:text-white");
+  });
+}
+
+/* ======================= render geral ======================= */
+function render() {
+  document.getElementById("mesLabel").textContent = rotuloMes(mes);
+  renderResumo();
+  renderEntradas();
+  renderCategorias();
+  renderSubs();
+  renderBarras();
+  renderFixas();
+  renderLista();
+}
+
+/* ======================= início ======================= */
+function iniciar() {
+  carregar();
+  document.getElementById("fData").value = hojeISO();
+  atualizaLanc();
+  enche(document.getElementById("xCat"), opcCat, "NECESSIDADE");
+  atualizaFixa("Moradia");
+  trocaAba("lanc");
+
+  document.getElementById("eSaldoInicial").oninput = e => {
+    const v = parseValor(e.target.value);
+    mexeMes("saldoInicial", isFinite(v) ? v : 0);
+  };
+  ENTRADAS.forEach(ent => {
+    document.getElementById(ent.campo).oninput = e => {
+      const v = parseValor(e.target.value);
+      mexeMes(ent.id, isFinite(v) ? v : 0);
+    };
+  });
+
+  document.getElementById("fTipo").onchange = () => atualizaLanc();
+  document.getElementById("xCat").onchange = () => atualizaFixa();
+  document.getElementById("btnSalvar").onclick = enviar;
+  document.getElementById("btnCancelar").onclick = () => { fimEdicao(); render(); };
+  ["fDesc", "fVal"].forEach(id =>
+    document.getElementById(id).addEventListener("keydown", e => { if (e.key === "Enter") enviar(); }));
+
+  document.getElementById("btnFix").onclick = enviarFixa;
+  document.getElementById("btnFixCancelar").onclick = () => { fimEdicaoFixa(); render(); };
+  document.getElementById("btnExcluirSempre").onclick = excluirSempre;
+  ["xNome", "xVal", "xDia"].forEach(id =>
+    document.getElementById(id).addEventListener("keydown", e => { if (e.key === "Enter") enviarFixa(); }));
+
+  document.getElementById("abaLanc").onclick = () => trocaAba("lanc");
+  document.getElementById("abaFix").onclick = () => trocaAba("fix");
+
+  document.getElementById("mesAnt").onclick = () => { mes = desloca(mes, -1); confirmando = confirmandoFix = null; render(); };
+  document.getElementById("mesProx").onclick = () => { mes = desloca(mes, 1); confirmando = confirmandoFix = null; render(); };
+  document.querySelectorAll(".filtro").forEach(b =>
+    b.onclick = () => { filtro = b.dataset.filtro; confirmando = null; renderLista(); });
+
+  render();
+}
+document.addEventListener("DOMContentLoaded", iniciar);
+if (document.readyState !== "loading") iniciar();
+</script>
+</body>
+</html>
