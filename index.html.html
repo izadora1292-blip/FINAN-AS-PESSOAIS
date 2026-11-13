@@ -63,7 +63,7 @@
 <body class="font-sans bg-slate-100 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100">
 
 <!-- classes usadas pelas linhas montadas em JS (garante a compilação do Tailwind) -->
-<div id="tw-safelist" hidden aria-hidden="true" class="flex flex-col items-center items-baseline gap-1 gap-1.5 gap-2 gap-3 py-10 py-8 py-3 py-2.5 py-1 px-2 px-2.5 px-3 text-center font-display text-[15px] text-[14px] text-[13px] text-[12.5px] text-[12px] text-[11.5px] text-[11px] text-[10.5px] font-bold font-semibold font-medium text-slate-400 text-slate-500 text-slate-600 max-w-[260px] border-b border-t border-slate-100 last:border-0 dark:border-slate-800 sticky top-0 z-10 -mx-5 -mx-3 mt-2 mt-3 mt-0.5 mt-1.5 justify-between bg-white/90 px-5 py-1.5 backdrop-blur-sm first:mt-0 dark:bg-slate-900/90 uppercase tracking-wider tabular-nums rounded-xl rounded-full rounded-lg rounded-sm bg-slate-100 bg-slate-50 bg-slate-200 dark:bg-slate-800 dark:bg-slate-800/60 dark:text-slate-300 dark:text-slate-400 grid h-9 w-9 h-8 w-8 h-7 h-3.5 h-2.5 w-2.5 h-1.5 w-1.5 h-1 shrink-0 place-items-center min-w-0 flex-1 truncate text-right whitespace-nowrap overflow-hidden w-11 w-14 transition hover:bg-slate-100 hover:bg-slate-200 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-white hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/40 dark:hover:text-rose-400 bg-rose-600 text-white line-through opacity-60 border border-dashed border-slate-300 dark:border-slate-700 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300 bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 text-rose-600 dark:text-rose-400 text-emerald-600 dark:text-emerald-400 leading-tight leading-relaxed underline underline-offset-2"></div>
+<div id="tw-safelist" hidden aria-hidden="true" class="flex flex-col items-center items-baseline gap-1 gap-1.5 gap-2 gap-3 py-10 py-8 py-3 py-2.5 py-1 px-2 px-2.5 px-3 text-center font-display text-[15px] text-[14px] text-[13px] text-[12.5px] text-[12px] text-[11.5px] text-[11px] text-[10.5px] font-bold font-semibold font-medium text-slate-400 text-slate-500 text-slate-600 max-w-[260px] border-b border-t border-slate-100 last:border-0 dark:border-slate-800 sticky top-0 z-10 -mx-5 -mx-3 mt-2 mt-3 mt-0.5 mt-1.5 justify-between bg-white/90 px-5 py-1.5 backdrop-blur-sm first:mt-0 dark:bg-slate-900/90 uppercase tracking-wider tabular-nums rounded-xl rounded-full rounded-lg rounded-sm bg-slate-100 bg-slate-50 bg-slate-200 bg-slate-300 dark:bg-slate-600 dark:bg-slate-700 dark:bg-slate-800 dark:bg-slate-800/60 dark:text-slate-300 dark:text-slate-400 grid h-9 w-9 h-8 w-8 h-7 h-3.5 h-2.5 w-2.5 h-1.5 w-1.5 h-1 shrink-0 place-items-center min-w-0 flex-1 truncate text-right whitespace-nowrap overflow-hidden w-11 w-14 transition hover:bg-slate-100 hover:bg-slate-200 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-white hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/40 dark:hover:text-rose-400 bg-rose-600 text-white line-through opacity-60 border border-dashed border-slate-300 dark:border-slate-700 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300 bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 text-rose-600 dark:text-rose-400 text-emerald-600 dark:text-emerald-400 leading-tight leading-relaxed underline underline-offset-2"></div>
 
 <div class="mx-auto flex max-w-2xl flex-col gap-4 px-4 pt-6 pb-16">
 
@@ -142,19 +142,19 @@
       </div>
 
       <div class="flex flex-col gap-1.5">
-        <label for="eVale" class="font-display text-[11px] font-bold uppercase tracking-wider text-slate-500">Vale (dia 15)</label>
+        <label for="ePagamento" id="labPagamento" class="font-display text-[11px] font-bold uppercase tracking-wider text-slate-500">Pagamento</label>
         <div class="relative">
           <span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[15px] text-slate-400">R$</span>
-          <input id="eVale" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off"
+          <input id="ePagamento" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off"
             class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-3 text-[15px] font-semibold tabular-nums outline-none placeholder:font-normal placeholder:text-slate-400 focus:border-slate-900 focus:bg-white focus:ring-4 focus:ring-slate-900/10 dark:border-slate-700 dark:bg-slate-950 dark:focus:border-slate-400 dark:focus:ring-slate-400/15">
         </div>
       </div>
 
       <div class="flex flex-col gap-1.5">
-        <label for="ePagamento" id="labPagamento" class="font-display text-[11px] font-bold uppercase tracking-wider text-slate-500">Pagamento</label>
+        <label for="eVale" class="font-display text-[11px] font-bold uppercase tracking-wider text-slate-500">Vale (dia 15)</label>
         <div class="relative">
           <span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[15px] text-slate-400">R$</span>
-          <input id="ePagamento" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off"
+          <input id="eVale" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off"
             class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-3 text-[15px] font-semibold tabular-nums outline-none placeholder:font-normal placeholder:text-slate-400 focus:border-slate-900 focus:bg-white focus:ring-4 focus:ring-slate-900/10 dark:border-slate-700 dark:bg-slate-950 dark:focus:border-slate-400 dark:focus:ring-slate-400/15">
         </div>
       </div>
@@ -438,8 +438,8 @@ const SUBS = {
   investimento: [ { nome: SUB_INV, cor: "#8b5cf6" } ]
 };
 const ENTRADAS = [
-  { id: "vale",      campo: "eVale",      rot: "Vale" },
   { id: "pagamento", campo: "ePagamento", rot: "Pagamento" },
+  { id: "vale",      campo: "eVale",      rot: "Vale" },
   { id: "ferias",    campo: "eFerias",    rot: "Férias" },
   { id: "plr",       campo: "ePlr",       rot: "PLR" },
   { id: "abono",     campo: "eAbono",     rot: "Abono" },
@@ -684,8 +684,9 @@ const PILL = {
   atencao: "bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300",
   neutro: "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
 };
-function statusCat(c, perc, val) {
+function statusCat(c, perc, val, temRenda) {
   const m = c.meta * 100;
+  if (!temRenda) return { txt: "informe as entradas do mês", cls: "neutro" };
   if (val <= 0) return { txt: "nada aqui ainda", cls: "neutro" };
   if (c.id === INV) {
     if (perc >= m + 0.5) return { txt: "acima da meta — ótimo sinal", cls: "bom" };
@@ -704,10 +705,17 @@ function renderCategorias() {
   card.hidden = false;
   document.getElementById("catEscopo").textContent = rotuloMes(mes);
 
-  const perc = c => (p[c.id] || 0) / total * 100;
+  /* a base é a renda do mês: entradas fixas + lançamentos de receita */
+  const t = totais(mes);
+  const renda = t.receitas;
+  const temRenda = renda > 0;
+  const sobra = renda - total;                       /* não comprometido (negativo = estourou) */
+  const perc = c => temRenda ? (p[c.id] || 0) / renda * 100 : 0;
+  const baseBarra = temRenda ? Math.max(renda, total) : total;
 
   /* alerta vermelho: necessidade e/ou lazer acima da meta */
-  const estouradas = CATEGORIAS.filter(c => c.id !== INV && (p[c.id] || 0) > 0 && perc(c) > c.meta * 100 + 0.5);
+  const estouradas = !temRenda ? [] :
+    CATEGORIAS.filter(c => c.id !== INV && (p[c.id] || 0) > 0 && perc(c) > c.meta * 100 + 0.5);
   const alerta = document.getElementById("catAlerta");
   if (estouradas.length) {
     alerta.hidden = false;
@@ -724,7 +732,7 @@ function renderCategorias() {
   /* sinal verde: investimento acima da meta */
   const inv = catDe(INV);
   const bom = document.getElementById("catBom");
-  if ((p[INV] || 0) > 0 && perc(inv) > inv.meta * 100 + 0.5) {
+  if (temRenda && (p[INV] || 0) > 0 && perc(inv) > inv.meta * 100 + 0.5) {
     bom.hidden = false;
     bom.textContent = "";
     const ic = el("span", "shrink-0", "★");
@@ -739,17 +747,24 @@ function renderCategorias() {
     const v = p[c.id] || 0;
     if (v <= 0) return;
     const seg = el("div", "h-full");
-    seg.style.width = (v / total * 100).toFixed(2) + "%";
+    seg.style.width = (v / baseBarra * 100).toFixed(2) + "%";
     seg.style.background = c.cor;
-    seg.title = c.nome + " · " + brl(v) + " · " + (v / total * 100).toFixed(1) + "%";
+    seg.title = c.nome + " · " + brl(v) +
+      (temRenda ? " · " + perc(c).toFixed(1) + "% das entradas" : "");
     barra.append(seg);
   });
+  if (temRenda && sobra > 0) {
+    const seg = el("div", "h-full bg-slate-200 dark:bg-slate-700");
+    seg.style.width = (sobra / baseBarra * 100).toFixed(2) + "%";
+    seg.title = "Não comprometido · " + brl(sobra) + " · " + (sobra / renda * 100).toFixed(1) + "%";
+    barra.append(seg);
+  }
 
   const lista = document.getElementById("catLista");
   lista.textContent = "";
   CATEGORIAS.forEach(c => {
     const v = p[c.id] || 0, pc = perc(c);
-    const st = statusCat(c, pc, v);
+    const st = statusCat(c, pc, v, temRenda);
     const bloco = el("div", "border-b border-slate-100 py-2.5 last:border-0 dark:border-slate-800");
     const linha = el("div", "flex items-baseline justify-between gap-3");
     const nome = el("span", "flex min-w-0 items-center gap-2 text-[14px] font-medium");
@@ -761,21 +776,40 @@ function renderCategorias() {
     vals.append(el("span", "w-14 text-right text-[15px] font-bold tabular-nums " +
       (st.cls === "ruim" ? "text-rose-600 dark:text-rose-400"
        : st.cls === "bom" && c.id === INV ? "text-emerald-600 dark:text-emerald-400" : ""),
-      pc.toFixed(0) + "%"));
+      temRenda ? pc.toFixed(0) + "%" : "—"));
     linha.append(nome, vals);
     const baixo = el("div", "mt-1.5 flex flex-wrap items-center gap-2");
     baixo.append(el("span", "rounded-full px-2 py-0.5 text-[11px] font-semibold " + PILL[st.cls], st.txt));
-    baixo.append(el("span", "text-[11px] text-slate-400", "meta " + (c.meta * 100) + "%"));
+    baixo.append(el("span", "text-[11px] tabular-nums text-slate-400",
+      "meta " + (c.meta * 100) + "%" + (temRenda ? " · " + brl(c.meta * renda) : "")));
     bloco.append(linha, baixo);
     lista.append(bloco);
   });
 
-  const t = totais(mes);
-  document.getElementById("catNota").textContent = t.receitas > 0
-    ? "As três categorias somam " + brl(total) + ", que é " +
-      Math.round(total / t.receitas * 100) + "% das entradas de " + rotuloMes(mes, true) +
-      ". As porcentagens dividem esse total entre as categorias; as metas seguem a regra 50/30/20."
-    : "As três categorias somam " + brl(total) + ". Informe as entradas do mês para comparar com a sua renda.";
+  if (temRenda && sobra > 0) {
+    const bloco = el("div", "border-b border-slate-100 py-2.5 last:border-0 dark:border-slate-800");
+    const linha = el("div", "flex items-baseline justify-between gap-3");
+    const nome = el("span", "flex min-w-0 items-center gap-2 text-[14px] font-medium text-slate-500");
+    const dot = el("i", "h-2.5 w-2.5 shrink-0 rounded-sm bg-slate-300 dark:bg-slate-600");
+    nome.append(dot, document.createTextNode("Não comprometido"));
+    const vals = el("span", "flex shrink-0 items-baseline gap-2");
+    vals.append(el("span", "text-[13px] tabular-nums text-slate-500", brl(sobra)));
+    vals.append(el("span", "w-14 text-right text-[15px] font-bold tabular-nums text-slate-500",
+      (sobra / renda * 100).toFixed(0) + "%"));
+    linha.append(nome, vals);
+    bloco.append(linha);
+    lista.append(bloco);
+  }
+
+  document.getElementById("catNota").textContent = !temRenda
+    ? "As três categorias somam " + brl(total) +
+      ". Informe as entradas de " + rotuloMes(mes, true) +
+      " para calcular as porcentagens — elas são sempre sobre a sua renda do mês."
+    : "Porcentagens sobre as entradas de " + rotuloMes(mes, true) + " (" + brl(renda) + "). " +
+      (sobra >= 0
+        ? "As saídas somam " + brl(total) + " e sobraram " + brl(sobra) + " não comprometidos."
+        : "As saídas somam " + brl(total) + " e passaram das entradas em " + brl(-sobra) + ".") +
+      " As metas seguem a regra 50/30/20.";
 }
 
 /* ======================= rosca por subcategoria ======================= */
@@ -930,7 +964,7 @@ function renderFixas() {
   const tot = somaFixas(mes, false) + somaFixas(mes, true);
   document.getElementById("fixTotal").textContent = tot ? brl(tot) : "—";
   document.getElementById("fixHint").textContent = editandoFix
-    ? "altere e toque em Salvar" : "vale de " + rotuloMes(mes) + " em diante";
+    ? "altere e toque em Salvar" : "passa a contar a partir de " + rotuloMes(mes);
 
   const boxEx = document.getElementById("boxExcluir");
   const btnEx = document.getElementById("btnExcluirSempre");
